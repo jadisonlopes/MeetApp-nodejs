@@ -17,6 +17,7 @@ class File extends Model {
         sequelize,
       }
     );
+
     return this;
   }
 }
