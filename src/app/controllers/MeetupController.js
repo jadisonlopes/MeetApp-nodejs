@@ -83,35 +83,21 @@ class MeetupController {
       return res.status(401).json({ error: 'Meetup already exists' });
     }
 
-    if (meetup.user_id !== req.userId) {
+    const { date, user_id } = meetup;
+
+    if (user_id !== req.userId) {
       return res.status(401).json({
         error: "You don't have permission to update this weetup.",
       });
     }
 
-    if (meetup.past) {
+    if (isBefore(date, new Date())) {
       return res.status(401).json({ error: 'Past dates are not permitted.' });
     }
 
     await meetup.update(req.body);
 
     return res.json({ meetup });
-  }
-
-  async delete(req, res) {
-    const meetup = await Meetup.findByPk(req.params.id);
-
-    if (meetup.user_id !== req.userId) {
-      return res.status(401).json({ error: "You don't have authorization." });
-    }
-
-    if (meetup.past) {
-      return res.status(401).json({ error: "Can't delete past meetups." });
-    }
-
-    meetup.destroy();
-
-    return res.json();
   }
 }
 
