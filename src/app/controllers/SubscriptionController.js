@@ -1,8 +1,33 @@
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 import Meetup from '../models/Meetup';
 import Subscription from '../models/Subscription';
 
 class SubscriptionController {
+  async index(req, res) {
+    const subscriptions = await Subscription.findAll({
+      where: {
+        user_id: req.userId,
+      },
+      attributes: [],
+      include: [
+        {
+          model: Meetup,
+          required: true,
+          where: {
+            date: {
+              [Op.gt]: new Date(),
+            },
+          },
+          attributes: ['title', 'description', 'location', 'date'],
+        },
+      ],
+      order: [[Meetup, 'date']],
+    });
+
+    return res.json(subscriptions);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       meetup_id: Yup.number().required(),
@@ -42,7 +67,6 @@ class SubscriptionController {
       include: [
         {
           model: Meetup,
-          as: 'meetup',
           required: true,
           where: {
             date: meetup.date,
