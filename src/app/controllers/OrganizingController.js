@@ -1,6 +1,5 @@
 import Meetup from '../models/Meetup';
 import File from '../models/File';
-import User from '../models/User';
 
 class OrganizingController {
   async index(req, res) {
@@ -14,11 +13,6 @@ class OrganizingController {
           model: File,
           as: 'banner',
           attributes: ['path', 'url'],
-        },
-        {
-          model: User,
-          as: 'organizer',
-          attributes: ['name', 'email'],
         },
       ],
     });
